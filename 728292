@@ -543,34 +543,31 @@ local OP = window:AddTab("OP Stuff")
 
 local rebirth = OP:AddFolder("OP Rebirth Farm")
 
-local packFarm = rebirth:AddSwitch("Fast Rebirth | NEED PACKS |", function(bool)
+local packFarm = rebirth:AddSwitch("Rebirth Farm", function(bool)
     isRunning = bool
- 
+    
     task.spawn(function()
         while isRunning do
             local currentRebirths = player.leaderstats.Rebirths.Value
             local rebirthCost = 10000 + (5000 * currentRebirths)
- 
+            
             if player.ultimatesFolder:FindFirstChild("Golden Rebirth") then
                 local goldenRebirths = player.ultimatesFolder["Golden Rebirth"].Value
                 rebirthCost = math.floor(rebirthCost * (1 - (goldenRebirths * 0.1)))
             end
- 
             unequipAllPets()
             task.wait(0.1)
             equipUniquePet("Swift Samurai")
- 
+            
             while isRunning and player.leaderstats.Strength.Value < rebirthCost do
                 for i = 1, 10 do
                     player.muscleEvent:FireServer("rep")
                 end
                 task.wait()
             end
- 
             unequipAllPets()
             task.wait(0.1)
             equipUniquePet("Tribal Overlord")
- 
             local machine = findMachine("Jungle Bar Lift")
             if machine and machine:FindFirstChild("interactSeat") then
                 player.Character.HumanoidRootPart.CFrame = machine.interactSeat.CFrame * CFrame.new(0, 3, 0)
@@ -579,13 +576,11 @@ local packFarm = rebirth:AddSwitch("Fast Rebirth | NEED PACKS |", function(bool)
                     pressE()
                 until player.Character.Humanoid.Sit
             end
- 
             local initialRebirths = player.leaderstats.Rebirths.Value
             repeat
                 ReplicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
                 task.wait(0.1)
             until player.leaderstats.Rebirths.Value > initialRebirths
- 
             if not isRunning then break end
             task.wait()
         end
